@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { LEVELS, generateQuestions, Question } from "./levels";
-import JungleScene from "./components/JungleScene";
-import HomeScreen from "./components/HomeScreen";
-import LevelSelectScreen from "./components/LevelSelectScreen";
-import GameScreen from "./components/GameScreen";
-import ResultScreen from "./components/ResultScreen";
+import JungleScene from "./JungleScene";
+import HomeScreen from "./HomeScreen";
+import LevelSelectScreen from "./LevelSelectScreen";
+import GameScreen from "./GameScreen";
+import ResultScreen from "./ResultScreen";
 
 type Screen = "home" | "levels" | "play" | "result";
 
@@ -31,7 +31,7 @@ function loadProgress(): SavedProgress {
       };
     }
   } catch {
-    /* ignore */
+    // Abaikan jika localStorage bermasalah
   }
 
   return {
@@ -47,22 +47,28 @@ function saveProgress(p: SavedProgress) {
       JSON.stringify(p)
     );
   } catch {
-    /* ignore */
+    // Abaikan jika localStorage bermasalah
   }
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("home");
+  const [screen, setScreen] =
+    useState<Screen>("home");
 
-  const [levelId, setLevelId] = useState(1);
+  const [levelId, setLevelId] =
+    useState(1);
 
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] =
+    useState<Question[]>([]);
 
-  const [score, setScore] = useState(0);
+  const [score, setScore] =
+    useState(0);
 
-  const [answers, setAnswers] = useState<boolean[]>([]);
+  const [answers, setAnswers] =
+    useState<boolean[]>([]);
 
-  const [unlockedLevel, setUnlockedLevel] = useState(1);
+  const [unlockedLevel, setUnlockedLevel] =
+    useState(1);
 
   const [bestScores, setBestScores] =
     useState<Record<number, number>>({});
@@ -82,16 +88,18 @@ export default function App() {
 
   const level = useMemo(
     () =>
-      LEVELS.find((l) => l.id === levelId) ??
-      LEVELS[0],
+      LEVELS.find(
+        (l) => l.id === levelId
+      ) ?? LEVELS[0],
     [levelId]
   );
 
   const startLevel = useCallback(
     (id: number) => {
       const lv =
-        LEVELS.find((l) => l.id === id) ??
-        LEVELS[0];
+        LEVELS.find(
+          (l) => l.id === id
+        ) ?? LEVELS[0];
 
       setLevelId(id);
 
@@ -100,23 +108,21 @@ export default function App() {
       );
 
       setScore(0);
-
       setAnswers([]);
-
       setJustUnlocked(false);
-
       setFinalComplete(false);
-
       setScreen("play");
     },
     []
   );
 
-  const handleStartFromHome = useCallback(() => {
-    // Start at highest unlocked level
-    // or level 1
-    startLevel(unlockedLevel);
-  }, [startLevel, unlockedLevel]);
+  const handleStartFromHome =
+    useCallback(() => {
+      startLevel(unlockedLevel);
+    }, [
+      startLevel,
+      unlockedLevel,
+    ]);
 
   const handleFinish = useCallback(
     (
@@ -124,9 +130,7 @@ export default function App() {
       finalAnswers: boolean[]
     ) => {
       setScore(finalScore);
-
       setAnswers(finalAnswers);
-
       setJustUnlocked(false);
 
       const prevBest =
@@ -142,24 +146,32 @@ export default function App() {
 
       setBestScores(nextBest);
 
-      let nextUnlocked = unlockedLevel;
+      let nextUnlocked =
+        unlockedLevel;
 
       if (
         finalScore >= 6 &&
         levelId < 5
       ) {
-        const candidate = levelId + 1;
+        const candidate =
+          levelId + 1;
 
-        if (candidate > unlockedLevel) {
+        if (
+          candidate >
+          unlockedLevel
+        ) {
           nextUnlocked = candidate;
           setJustUnlocked(true);
         }
       }
 
-      setUnlockedLevel(nextUnlocked);
+      setUnlockedLevel(
+        nextUnlocked
+      );
 
       saveProgress({
-        unlockedLevel: nextUnlocked,
+        unlockedLevel:
+          nextUnlocked,
         bestScores: nextBest,
       });
 
@@ -191,12 +203,16 @@ export default function App() {
 
       {screen === "home" && (
         <HomeScreen
-          onStart={handleStartFromHome}
+          onStart={
+            handleStartFromHome
+          }
           onPickLevel={() =>
             setScreen("levels")
           }
           bestScores={bestScores}
-          unlockedLevel={unlockedLevel}
+          unlockedLevel={
+            unlockedLevel
+          }
         />
       )}
 
@@ -207,7 +223,9 @@ export default function App() {
             setScreen("home")
           }
           bestScores={bestScores}
-          unlockedLevel={unlockedLevel}
+          unlockedLevel={
+            unlockedLevel
+          }
         />
       )}
 
@@ -229,16 +247,22 @@ export default function App() {
           score={score}
           total={10}
           answers={answers}
-          unlockedNext={justUnlocked}
+          unlockedNext={
+            justUnlocked
+          }
           hasNext={levelId < 5}
-          allLevelsComplete={finalComplete}
+          allLevelsComplete={
+            finalComplete
+          }
           onRetry={() =>
             startLevel(levelId)
           }
           onHome={() =>
             setScreen("home")
           }
-          onNextLevel={handleNextLevel}
+          onNextLevel={
+            handleNextLevel
+          }
         />
       )}
     </div>
